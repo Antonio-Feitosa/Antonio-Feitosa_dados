@@ -1,5 +1,5 @@
 ---
-title: "D6_Apresentacao"
+title: "Desenvolvimento da Agricultura Irrigada no Brasil"
 author: "Antonio Carvalho Feitosa"
 date: "6 de outubro de 2018"
 output:
@@ -11,34 +11,20 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-###Construindo a apresenta??o
 
-```{r}
-### INTRODU??O
-
-### ANTECEDENTES E CONTEXTO
-
-### OBTEN??O E TRATAMENTO DOS DADOS
-
-### RESULTADOS E DISCUSS?O
-
-### CONSIDERA??ES FINAIS
-
-### REFER?NCIAS
-```
-
+### Analise dos Dados de 2000 a 2015
 
 
 ```{r}
 dados <- read.csv("https://raw.githubusercontent.com/cursoRunb/cursoENAP2018/master/Aula5/dadosAlunos/antonio/ANTONIO_areairrig1995pib.csv", sep =";", encoding ="latin1")
-head(dados)
-tail(dados)
+
+
 head(dados[order(dados$area1000ha, decreasing = TRUE),])
 head(dados[order(dados$pib2015, decreasing = TRUE),])
 
 ```
 
-### Atribuindo e organizando os dados para an?lise.
+### Atribuindo e organizando os dados para analise.
 
 ```{r}
 dados2015pib <- dados[order(dados$pib2015, decreasing = TRUE),]
@@ -48,25 +34,19 @@ tail(dados2015pib)
 
 ```
 
-### Imprimindo o gr?fico de pontos, observa-se claramente que existem 2 (dois) $outliers$: Bras?lia-DF e Campos dos Goytacazes-RJ.
+### Imprimindo o grafico de pontos, observa-se claramente que existem 2 (dois) $outliers$: Brasilia-DF e Campos dos Goytacazes-RJ.
 
 ```{r}
-plot(dados2015pib$municipio,dados2015pib$pib2015,
-     xlab = "Municipios", ylab = "PIB em R$ milh?es", main = "Scatter1")
-
-library(ggplot2)
-
 ggplot() + 
   geom_point(aes(x=municipio, y=pib2015), data=dados2015pib) +
-  labs(x="Municipios", y="PIB em R$ milhoes", title="Scatter1") +
+  labs(x="Municipios", y="PIB em R$ milhoes", 
+       title="PIB_2015 dos 100 Municipios Selecionados") +
   theme(plot.title = element_text(hjust = 0.5, color="blue"), 
   axis.text.x = element_blank())
   
-
-
 ```
 
-### Identificando outliers: Bras?lia-DF, Campos dos Goytacazes-RJ e Boa Vista-RR
+### Identificando outliers: Brasilia-DF, Campos dos Goytacazes-RJ e Boa Vista-RR
 
 
 ```{r}
@@ -102,7 +82,7 @@ ggplot(aes(x="", y=valor, fill=name), data=Outleirs2) + geom_bar(stat="identity"
 
 ```
 
-### Excluindo esses 3 (tr?s) munic?pios, considerados __outleirs__ passei a analisar os dados dos outros 97 munic?pios.
+### Excluindo esses 3 (tres) municipios, considerados __outleirs__ passei a analisar os dados dos outros 97 municipios.
 
 ```{r}
 pib2015A <- dados2015pib
@@ -111,29 +91,21 @@ head(pib2015A)
 
 ```
 
-
-
-```{r}
-plot(pib2015A$municipio,pib2015A$pib2015, xlab = "Municipios", ylab = "PIB em R$ milh?es", main = "PIB_2015 dos 100 Munic?pios Selecionados")
-
-```
-
-
-### Imprimindo o _boxplot_ do PIB dos 100 munic?pios selecionados.
+### Imprimindo o _boxplot_ do PIB dos 100 municipios selecionados.
 
 ```{r}
-boxplot(pib2015A$pib2015, ylab = "PIB em R$ milh?es", main = "PIB_2015 dos 100 Munic?pios Selecionados")
+boxplot(pib2015A$pib2015, ylab = "PIB em R$ milhoes", main = "PIB_2015 dos 100 Municipios Selecionados")
 
 ggplot(aes(y=pib2015), data=pib2015A) +
   geom_boxplot() +
-  labs(y="PIB em R$ milhoes", title="PIB_2015 dos 100 Munic?pios Selecionados")
+  labs(y="PIB em R$ milhoes", title= "PIB_2015 dos 100 Municipios   Selecionados")
 
 
 
 
 ```
 
-### Excluindo _outileirs_  para an?lise dos dados.
+### Excluindo _outileirs_  para analise dos dados.
 
 ```{r}
 pib2015B <- pib2015A[4:100,]
@@ -142,12 +114,12 @@ head(pib2015B)
 
 ```
 
-### Gerando o gr?fico de pontos para os 97 munic?pios selecionados.
+### Gerando o grafico de pontos para os 97 municipios selecionados.
 
 ```{r}
 plot(pib2015B$municipio,pib2015B$pib2015,
      xlab = "Municipios", ylab = "PIB em R$ milh?es", 
-     main = "Scatter2 - PIB_2015 dos 97 Munic?pios Selecionados", 
+     main = "PIB_2015 dos 97 Municipios Selecionados", 
      col.main = "blue"
      )
 
@@ -155,11 +127,11 @@ plot(pib2015B$municipio,pib2015B$pib2015,
 
 ```
 
-### Gerando o _boxplot_ para os 97 munic?pios selecionados
+### Gerando o _boxplot_ para os 97 municipios selecionados
 
 ```{r}
 boxplot(pib2015B$pib2015, ylab = "PIB em R$ milh?es", 
-        main = "PIB_2015 dos 97 Munic?pios Selecionados",
+        main = "PIB_2015 dos 97 Municipios Selecionados",
         col.main = "blue"
         )
 
@@ -186,7 +158,7 @@ pib2000_2015
 
 ```
 
-### Atualizando pelo INPC os valores de PIB dos 97 munic?pios selecionados dos anos 2000, 2005, 2010 e 2015 at? 30 de junho de 2018
+### Atualizando pelo INPC os valores de PIB dos 97 municipios selecionados dos anos 2000, 2005, 2010 e 2015 ate 30 de junho de 2018
 
 ```{r}
 atualiza <- c(3.1101, 2.0095, 1.5779, 1.1258)
@@ -203,7 +175,7 @@ pibMunicipios
 
 ```
 
-### Atribuindo e atualizando pelo INPC os valores de PIB do Brasil nos anos 2000, 2005, 2010 e 2015 at? 30 de junho de 2018
+### Atribuindo e atualizando pelo INPC os valores de PIB do Brasil nos anos 2000, 2005, 2010 e 2015 ate 30 de junho de 2018
 
 ```{r}
 pibBR <- c(1199092, 2170585, 3885847, 6000570)
@@ -217,7 +189,7 @@ pibBrasil
 
 ```
 
-### Calculando a rela??o entre 2015 e 2000 (pibMunicipios/pibBrasil)
+### Calculando a relacao entre 2015 e 2000 (pibMunicipios/pibBrasil)
 
 ```{r}
 razaoPIB <- 100*(pibMunicipios/pibBrasil)
@@ -225,7 +197,7 @@ razaoPIB
 
 ```
 
-### Calculando a varia??o entre 2015 e 2000 (pibMunicipios/pibBrasil)
+### Calculando a variacao entre 2015 e 2000 (pibMunicipios/pibBrasil)
 
 ```{r}
 variacao <- razaoPIB[4]/razaoPIB[1]
@@ -234,7 +206,7 @@ variacao
 
 ```
 
-### Calculando a rela??o entre 2015 e 2000 (pibMunicipios/pibBrasil) usando dataframe
+### Calculando a relacao entre 2015 e 2000 (pibMunicipios/pibBrasil) usando dataframe
 
 ```{r}
 Anos <- c(2000, 2005, 2010, 2015)
@@ -249,7 +221,7 @@ tabela
 
 ```
 
-### Calculando as varia??es entre 2015 e 2000 para os Munic?pios
+### Calculando as variacoes entre 2015 e 2000 para os Municipios
 
 ```{r}
 variacaoMUN <- 100*(tabela[4,3]-tabela[1,3])/tabela[1,3]
@@ -261,27 +233,26 @@ variacaoMUN
 
 ```{r}
 plot(tabela$Anos , tabela$pibMunicipios,
-     xlab = "Anos", ylab = " PIB em R$ milh?es ", 
-     main = " PIB dos 76 Munic?pios com irriga??o entre 2000 e 2015 ",
-     col = "red",
-     col.main = "blue", pch = 25,
-     lines(tabela$Anos, tabela$pibMunicipios,
-           xlim = c(1,4),
-           ylim = c(1,4) )
-          )
+  xlab = "Anos", ylab = " PIB em R$ milhoes ", 
+  main = "PIB dos 97 Municipios com irrigacao entre 2000 e 2015",
+  col = "red", col.main = "blue", pch = 25,
+  lines(tabela$Anos, tabela$pibMunicipios,
+  xlim = c(1,4),
+  ylim = c(1,4) )
+  )
 
 ```
 
-### Calculando as varia??es entre 2015 e 2000 para o Brasil
+### Calculando as variacoes entre 2015 e 2000 para o Brasil
 
 ```{r}
 plot(tabela$Anos , tabela$pibBrasil, 
-     xlab = "Anos", ylab = " PIB em R$ milh?es ", 
+     xlab = "Anos", ylab = " PIB em R$ milhoes ", 
      main = " PIB Brasil entre 2000 a 2015 ", 
      col = "blue" , col.main = "red", pch = 9,
      lines(tabela$Anos, tabela$pibBrasil,
-           xlim = c(1,4),
-           ylim = c(1,4) )
+    xlim = c(1,4),
+    ylim = c(1,4) )
      )
 
 ```
@@ -294,19 +265,19 @@ variacaoBR
 
 ```
 
-### Comparando as varia??es entre 2015 e 2000 para Munic?pios e Brasil
+### Comparando as variacoes entre 2015 e 2000 para Municipios e Brasil
 
 ```{r}
 variacaoMUN - variacaoBR
 
 ```
 
-### RESULTADOS E DISCUSS?O
+### RESULTADOS E DISCUSSAO
 
-#### Entre 2000 e 2015 o PIB dos 97 munic?pios selecionados (com maior ?rea irrigada) cresceu 83,7% em termos reais((valores atualizados pelo INPC at? 30/06/2018), enquanto o PIB brasileiro cresceu 81,1%. Portanto, no per?odo estudado, o crescimento do PIB dos munic?pios com irriga??o (97 selecionados) foi 2,6% maior que o crescimento do PIB brasileiro (valores absolutos).
+#### Entre 2000 e 2015 o PIB dos 97 municipios selecionados (com maior area irrigada) cresceu 83,7% em termos reais((valores atualizados pelo INPC ate 30/06/2018), enquanto o PIB brasileiro cresceu 81,1%. Portanto, no periodo estudado, o crescimento do PIB dos municipios com irrigacao (97 selecionados) foi 2,6% maior que o crescimento do PIB brasileiro (valores absolutos).
 
-#### Considerando as raz?es pibMunicipios/pibBrasil entre 2015 e 2000, a varia??o foi de 1,4%. Isso significa que, em valores atuais(30/06/2018), apesar do elevado crescimento do PIB nacional nesse per?odo, o crescimento do PIB dos munic?pios selecionados foi superior ao crescimento do PIB brasileiro (valores relativos).
+#### Considerando as razoes pibMunicipios/pibBrasil entre 2015 e 2000, a variacao foi de 1,4%. Isso significa que, em valores atuais(30/06/2018), apesar do elevado crescimento do PIB nacional nesse periodo, o crescimento do PIB dos municipios selecionados foi superior ao crescimento do PIB brasileiro (valores relativos).
 
-### CONSIDERA??ES FINAIS
+### CONSIDERACOES FINAIS
 
-#### Os resultados deste __Relat?rio Preliminar__ sinalizam que houve crescimento do PIB dos munic?pios que possuem agricultura irrigada maior que o crescimento do PIB brasileiro no S?culo XXI. A avalia??o proposta dever? ser ampliada para 50 anos, incluindo os 5.570 munic?pios e outros indicadores. O roteiro deste Relat?rio dever? servir de base para contrata??o e realiza??o de uma avalia??o completa da __Pol?tica Nacional de Irriga??o__.
+#### Os resultados deste __Estudo Preliminar__ sinalizam que houve crescimento do PIB dos municipios que possuem agricultura irrigada maior que o crescimento do PIB brasileiro no Seculo XXI. A avaliacao proposta devera ser ampliada para 50 anos, incluindo os 5.570 municipios e outros indicadores. O roteiro deste Estudo devera servir de base para contratacao e realizacao de uma avaliacao completa da __Politica Nacional de Irrigacao__.
