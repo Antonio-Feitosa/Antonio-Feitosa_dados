@@ -3,8 +3,8 @@ title: "Desenvolvimento da Agricultura Irrigada no Brasil"
 author: "Antonio Carvalho Feitosa"
 date: "6 de outubro de 2018"
 output:
-  slidy_presentation: default
   ioslides_presentation: default
+  slidy_presentation: default
 ---
 
 ```{r setup, include=FALSE}
