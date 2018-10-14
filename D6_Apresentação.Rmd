@@ -1,15 +1,21 @@
 ---
+output:
+  slidy_presentation: default
+  html_document: default
+---
+---
+
 title: "Desenvolvimento da Agricultura Irrigada no Brasil"
 author: "Antonio Carvalho Feitosa"
 date: "6 de outubro de 2018"
 output:
-  ioslides_presentation: default
   slidy_presentation: default
----
+    ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
 
 
 ### Analise dos Dados de 2000 a 2015
@@ -40,7 +46,7 @@ tail(dados2015pib)
 ggplot() + 
   geom_point(aes(x=municipio, y=pib2015), data=dados2015pib) +
   labs(x="Municipios", y="PIB em R$ milhoes", 
-       title="PIB_2015 dos 100 Municipios Selecionados") +
+  title="PIB_2015 dos 100 Municipios Selecionados") +
   theme(plot.title = element_text(hjust = 0.5, color="blue"), 
   axis.text.x = element_blank())
   
@@ -98,7 +104,10 @@ boxplot(pib2015A$pib2015, ylab = "PIB em R$ milhoes", main = "PIB_2015 dos 100 M
 
 ggplot(aes(y=pib2015), data=pib2015A) +
   geom_boxplot() +
-  labs(y="PIB em R$ milhoes", title= "PIB_2015 dos 100 Municipios   Selecionados")
+  labs(y="PIB em R$ milhoes", 
+  title= "PIB_2015 dos 100 Municipios   Selecionados") +
+  theme(plot.title = element_text(hjust = 0.5, color="blue"), 
+  axis.text.x = element_blank())
 
 
 
@@ -118,14 +127,27 @@ head(pib2015B)
 
 ```{r}
 plot(pib2015B$municipio,pib2015B$pib2015,
-     xlab = "Municipios", ylab = "PIB em R$ milh?es", 
+     xlab = "Municipios", ylab = "PIB em R$ milhoes", 
      main = "PIB_2015 dos 97 Municipios Selecionados", 
      col.main = "blue"
      )
+```
 
+```{r}
 
+ggplot() + 
+  geom_point(aes(x=municipio, y=pib2015), data=pib2015B) +
+  labs(x="Municipios", y="PIB em R$ milhoes", 
+  title="PIB_2015 dos 97 Municipios Selecionados") +
+  theme(plot.title = element_text(hjust = 0.5, color="blue"), 
+  axis.text.x = element_blank())
 
 ```
+
+
+
+
+
 
 ### Gerando o _boxplot_ para os 97 municipios selecionados
 
@@ -136,6 +158,22 @@ boxplot(pib2015B$pib2015, ylab = "PIB em R$ milh?es",
         )
 
 ```
+
+```{r}
+ggplot(aes(y=pib2015), data=pib2015B) +
+  geom_boxplot() +
+  labs(y="PIB em R$ milhoes", 
+  title= "PIB_2015 dos 97 Municipios   Selecionados") +
+  theme(plot.title = element_text(hjust = 0.5, color="blue"), 
+  axis.text.x = element_blank())
+
+
+
+```
+
+
+
+
 
 ### Atualizando os valores de PIB para an?lise
 
