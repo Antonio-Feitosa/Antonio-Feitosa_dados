@@ -43,6 +43,10 @@ tail(dados2015pib)
 ### Imprimindo o grafico de pontos, observa-se claramente que existem 2 (dois) $outliers$: Brasilia-DF e Campos dos Goytacazes-RJ.
 
 ```{r}
+library(ggplot2)
+
+
+
 ggplot() + 
   geom_point(aes(x=municipio, y=pib2015), data=dados2015pib) +
   labs(x="Municipios", y="PIB em R$ milhoes", 
