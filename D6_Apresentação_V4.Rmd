@@ -1,7 +1,7 @@
 ---
 output:
-  ioslides_presentation: default
   slidy_presentation: default
+  ioslides_presentation: default
 ---
 ---
 
@@ -44,7 +44,7 @@ tail(dados2015pib)
 
 ```{r}
 library(ggplot2)
-
+as.function(ggplot())
 
 
 ggplot() + 
