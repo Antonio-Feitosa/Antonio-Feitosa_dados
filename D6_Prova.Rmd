@@ -1,0 +1,218 @@
+---
+title: "Prova"
+author: "Antonio Carvalho Feitosa"
+date: "22 de outubro de 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Carregue os pacotes tidyverse, lubridate, "survey" e "srvyr"
+
+```{r}
+lista.de.pacotes = c("tidyverse","lubridate","survey", "srvyr") 
+novos.pacotes <- lista.de.pacotes[!(lista.de.pacotes %in%
+    installed.packages()[,"Package"])]
+    if(length(novos.pacotes) > 0) {install.packages(novos.pacotes)}
+    lapply(lista.de.pacotes, require, character.only=T)
+    rm(lista.de.pacotes,novos.pacotes)
+    gc()
+
+library(tidyverse)
+library(lubridate)
+library(survey)
+library(srvyr)
+library(magrittr)
+library(purrr)
+library(readxl)
+library(readr)
+
+
+```
+
+
+## Parte 1 ----
+
+# 1. Carregue o arquivo `decisoes.rds` que está na pasta aulas_ENAP/CADS2018/Exercícios/dados
+# em um objeto chamado `decisoes` (ou outro nome à sua escolha).
+# Obs.: o arquivo pode ser baixado do OneDrive <https://goo.gl/5xVnvn> 
+# ou do GitHub <https://github.com/fredbsr/aulas_ENAP/tree/master/CADS2018/Exerc%C3%ADcios/dados>
+
+```{r}
+decisoes <- read_rds("C://R//Repositorio//decisoes.rds")
+decisoes %>% head
+
+```
+
+
+# 2. Separe a coluna `classe_assunto` em duas colunas, 
+# uma contendo a `classe` e outra contendo o `assunto`
+
+```{r}
+decisoes <- decisoes %>%
+  separate(classe_assunto, 
+           c('classe', 'assunto'), 
+           sep = ' / ', 
+           extra = 'merge', 
+           fill = 'right')
+decisoes %>% head
+
+```
+
+
+# 3. Elabore um data.frame em que as linhas sejam a classe, as colunas sejam os meses e os valores sejam as quantidades de decisões 
+# Dica 1: crie uma variável `mes` e exclua os casos em que não há informação sobre data da decisão
+# Dica 2: agrupar por classe e mes e fazer o spread
+
+```{r}
+resultado <- decisoes %>%
+  mutate(mes=lubridate::month(dmy(data_decisao))) %>%
+  dplyr::filter(!is.na(mes)) %>%
+  group_by(assunto,mes) %>%
+  summarise(n=n()) %>%
+  spread(mes,n,fill = 0)
+
+resultado %>% head
+
+```
+
+
+## Parte 2 ----
+
+
+# 1. Leia o conjunto de dados 'api' do pacote survey usando o comando data(api)
+
+```{r}
+data(api)
+```
+
+# 2. Elimine os objetos 'apiclus1', 'apiclus2', 'apipop' e 'apisrs'
+# mantendo apenas o objeto apistrat
+
+```{r}
+rm(apiclus1,apiclus2,apipop,apisrs)
+
+```
+
+# 3. crie o objeto 'pesos' selecionando as colunas 'stype' e 'pw' do objeto 'apistrat'
+
+```{r}
+pesos <- apistrat %>%
+  dplyr::select(stype,pw)
+
+pesos %>% head
+
+```
+
+# 4. crie o objeto 'escolas_notas' selecionando as colunas 
+# 'cds', 'stype', 'api99' e 'api00' do objeto apistrat
+
+```{r}
+escolas_notas <- apistrat %>%
+  dplyr::select(cds,stype,api99,api00)
+
+escolas_notas %>% head
+
+```
+
+# 5. Remova as duplicatas (linhas em duplicidade) do arquivo `pesos` que você criou no passo 3
+
+```{r}
+pesos <- pesos %>%
+  distinct()
+
+pesos %>% head
+```
+
+
+# 6. Quantas linhas tem o novo objeto `pesos`, sem as duplicidades
+
+```{r}
+pesos %>% nrow
+
+```
+
+# 7. Traga a variável `pw` para `escola_notas`, criando um novo 
+# objeto `amostra`, resultado da união (join) do objeto `pesos` 
+# ao objeto `escolas_notas` 
+# dica use left_join, com `escolas_notas` na esquerda.
+
+```{r}
+amostra <- escolas_notas %>%
+  left_join(pesos, by = "stype")
+
+amostra %>% head
+
+```
+
+
+# 8. Crie o objeto tbl_svy `amostra_expandida` expandindo a amostra aleatória simples (`amostra`)
+# usando a variável (coluna) "pw", contendo o peso amostral como o peso e 
+# a variável `stype` como o estrato.
+# dica: as_survey(strata=stype,weight=pw)
+
+```{r}
+amostra_expandida <- amostra %>%
+  as_survey(strata=stype,weight=pw)
+
+class(amostra_expandida)
+
+```
+
+# 9. Usando a variável `stype` crie uma nova variável indicando se 
+# a escola é de nível fundamental (categorias **E** e **M** de `stype`)  
+# ou de nível médio (categoria *H* de `stype`). 
+# Dica: use `mutate` e `case_when`.
+
+```{r}
+data(api)
+
+novaamostra <- apistrat %>% 
+  as_survey(strat = stype,weight = pw) %>%
+  mutate(nivel=case_when(
+    stype=="E"~"Fundamental",
+    stype=="M"~"Fundamental",
+    stype=="H"~"Médio"
+  ))
+
+class(novaamostra)
+```
+
+```{r}
+resolucao <- novaamostra %>%
+  group_by(nivel) %>%
+  summarize(proporcao = survey_mean(vartype = "cv"),
+            n=survey_total(vartype = "ci"))
+
+resolucao %>% head
+
+```
+
+
+# 10. Faça um gráfico de barras comparando a variação média 
+# das notas de 1999 (`api99`) e 2000 (`api00`) por nível de 
+# escola (`nivel`), utilize as estimativas intervalares para 
+# construir barras com o intervalo de confiança
+
+```{r, message=FALSE, warning=FALSE, results=FALSE, echo=FALSE}
+novaamostra %>%
+  group_by(nivel) %>%
+  summarise(api_diff = survey_mean(api00 - api99, vartype = "ci")) %>%
+  ggplot(aes(x = nivel, y = api_diff, fill = nivel, color=nivel,
+      ymax = api_diff_upp, ymin = api_diff_low)) +
+  geom_bar(stat = "identity",alpha=0.6) +
+  geom_errorbar(width = 0, size=3)
+
+```
+
+
+# 11. Pode-se dizer que a variação média das notas entre 1999 e 2000 por nível de ensino
+# (Médio e Fundamental) foi diferente?
+
+# Resposta: Sim, pois não há intersecção entre as 
+# variações (api-diff)), considerando os intervalos de confiança (ci), # conforme o gráfico acima.
+
+
+

@@ -1576,7 +1576,6 @@ amostra_expandida %>% head
 out <- amostra_expandida %>%
   group_by(nivel) %>%
   summarise(api_diff = survey_mean(api00 - api99, vartype = "ci"))
-
 ```
 
 
